@@ -1,13 +1,17 @@
 import java.awt.Color;
+import java.util.Arrays;
 
 
 public class SeamCarver {
 	private Picture pic;
+	private int energyTable[][];
+	private final static int MAX_ENERGY = 3061;
+	private final static String PIC_SMALL = "./Ando-Hiroshige-11th-station-Mishima.JPG";
 
 	// create a seam carver object based on the given picture
 	public SeamCarver(Picture picture) {
 		pic= new Picture(picture);
-		
+		energyTable = getEnergyTable();
 	}
 	
 	// current picture
@@ -37,6 +41,19 @@ public class SeamCarver {
 		return gradientFunction(self, above) + gradientFunction(self, below) + 
 				gradientFunction(self, left) + gradientFunction(self, right);
 	}
+	
+	// creates and returns a new energy table
+	int[][] getEnergyTable() {
+		int height = pic.height();
+		int width = pic.width();
+		int[][] table = new int[pic.height()][pic.width()];
+		for (int i=0; i<pic.height(); i++) {
+			for (int j=0; j<pic.width(); j++) {
+				table[i][j] = energy(j, i);
+			}
+		}
+		return table;
+	}
 
 	public int gradientFunction(Color c1, Color c2) {
 		int redDiff = Math.abs(c1.getRed() - c2.getRed());
@@ -56,6 +73,18 @@ public class SeamCarver {
 		return null;
 		
 	}
+
+	// return array of n horizontal seams
+	public int[][] findHorizontalSeams(int n) {
+		return null;
+		
+	}
+	
+	// return array of n vertical seams
+	public int[][] findVerticalSeams(int n) {
+		return null;
+		
+	}
 	
 	// remove horizontal seam from current picture
 	public void removeHorizontalSeam(int[] seam) {
@@ -66,5 +95,44 @@ public class SeamCarver {
 	public void removeVerticalSeam(int[] seam) {
 		
 	}
+	
+	public Picture shrinkVertical(Picture pic, int numRows) {
+		return pic;
+		
+	}
+
+	public Picture shrinkHorizontal(Picture pic, int numCols) {
+		return pic;
+		
+	}
+	
+	/////////////////// Debug Methods //////////////////
+	public void printEnergyTable() {
+		
+	}
+	
+	public void showVerticalSeam(int[] seam, Picture picCopy) {
+		if (picCopy == null) picCopy = new Picture(pic);
+		for (int i=0; i<seam.length; i++) {
+			picCopy.set(seam[i], i, Color.red);
+		}
+		picCopy.show();
+	}
+	
+	public void showHorizontalSeam(int[] seam, Picture picCopy) {
+		if (picCopy == null) picCopy = new Picture(pic);
+		for (int i=0; i<seam.length; i++) {
+			picCopy.set(i, seam[i], Color.red);
+		}
+		picCopy.show();
+	}
+
+    public static void main(String[] args) {
+        Picture picture = new Picture(PIC_SMALL);
+        SeamCarver sc = new SeamCarver(picture);
+        int[] vSeam = new int[picture.height()];
+        Arrays.fill(vSeam, 50);
+        sc.showVerticalSeam(vSeam, null);
+    }
 	
 }

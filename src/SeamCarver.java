@@ -5,7 +5,8 @@ import java.util.Arrays;
 public class SeamCarver {
 	private Picture pic;
 	private int energyTable[][];
-	private boolean[][] keepArray;
+	private Color[][] colorTable;
+	private int[] seam;
 	private final static int MAX_ENERGY = 3061;
 	private final static String PIC_SMALL = "./Ando-Hiroshige-11th-station-Mishima.JPG";
 	private final static String PIC_TINY = "./12x10.png";
@@ -13,9 +14,11 @@ public class SeamCarver {
 	// create a seam carver object based on the given picture
 	public SeamCarver(Picture picture) {
 		pic= new Picture(picture);
+		colorTable = new Color[pic.height()][pic.width()];
+		for(int i = 0; i < pic.height();i++)
+			for(int j = 0; j < pic.width(); j++)
+				colorTable[i][j]=pic.get(j, i);
 		energyTable = getEnergyTable();
-		keepArray = new boolean[pic.height()][pic.width()];
-		Arrays.fill(keepArray,true);
 	}
 	
 	// current picture
@@ -36,11 +39,11 @@ public class SeamCarver {
 	// energy of pixel at column x and row y
 	public int energy(int x, int y) {
 		Color self, above, below, left, right;
-		self = pic.get(x, y);
-		above = (y == 0) ? pic.get(x, y+1) : pic.get(x, y-1);
-		below = (y == pic.height()-1) ? pic.get(x, y-1) : pic.get(x, y+1);
-		left = (x == 0) ? pic.get(x+1, y) : pic.get(x-1, y);
-		right = (x == pic.width()-1) ? pic.get(x-1, y) : pic.get(x+1, y);
+		self = colorTable[y][x];
+		above = (y == 0) ? colorTable[y+1][x] : colorTable[y-1][x];
+		below = (y == colorTable.length-1) ? colorTable[y-1][x] : colorTable[y+1][x];
+		left = (x == 0) ? colorTable[y][x+1] : colorTable[y][x-1];
+		right = (x == colorTable[0].length-1) ? colorTable[y][x-1] : colorTable[y][x+1];
 		
 		return gradientFunction(self, above) + gradientFunction(self, below) + 
 				gradientFunction(self, left) + gradientFunction(self, right);
@@ -86,35 +89,61 @@ public class SeamCarver {
 		return null;
 		
 	}
-
-	// return array of n horizontal seams
-	public int[][] findHorizontalSeams(int n) {
-		return null;
-		
+	
+	public void verticalUpdateArrays()
+	{
+		Color[][] newColor = new Color[energyTable.length][energyTable[0].length-1];
+		int k = 0;
+		for(int i = 0; i < newColor.length;i++)
+			for(int j = 0; j < newColor[0].length;j++)
+			{
+				if (j != seam[i])
+				{
+					newColor[i][k] = colorTable[i][j];
+					k++;
+				}
+			}
+		colorTable = newColor;
+		energyTable = getEnergyTable();
 	}
 	
-	// return array of n vertical seams
-	public int[][] findVerticalSeams(int n) {
-		return null;
-		
+	public void horizontalUpdateArrays()
+	{
+		Color[][] newColor = new Color[energyTable.length-1][energyTable[0].length];
+		int k = 0;
+		for(int i = 0; i < newColor[0].length;i++)
+			for(int j = 0; j < newColor.length;j++)
+			{
+				if (j != seam[i])
+				{
+					newColor[k][i] = colorTable[j][i];
+					k++;
+				}
+			}
+		colorTable = newColor;
+		energyTable = getEnergyTable();
 	}
-	
 	// remove horizontal seam from current picture
-	public void removeHorizontalSeam(int[] seam) {
-		
+	public void removeHorizontalSeam(int rows) {
+		for (int i = 0; i < rows; i++)
+		{
+			findHorizontalSeam();
+			horizontalUpdateArrays();
+		}
+		shrinkHorizontal();
 	}
 	
 	// remove vertical seam from current picture
-	public void removeVerticalSeam(int[] seam) {
+	public void removeVerticalSeam(int cols) {
 		
 	}
 	
-	public Picture shrinkVertical(Picture pic, int numRows) {
+	public Picture shrinkVertical() {
 		return pic;
 		
 	}
 
-	public Picture shrinkHorizontal(Picture pic, int numCols) {
+	public Picture shrinkHorizontal() {
 		return pic;
 		
 	}

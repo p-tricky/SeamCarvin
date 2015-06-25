@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -7,6 +8,7 @@ public class SeamCarver {
 	private int energyTable[][];
 	private final static int MAX_ENERGY = 3061;
 	private final static String PIC_SMALL = "./Ando-Hiroshige-11th-station-Mishima.JPG";
+	private final static String PIC_TINY = "./12x10.png";
 
 	// create a seam carver object based on the given picture
 	public SeamCarver(Picture picture) {
@@ -53,6 +55,15 @@ public class SeamCarver {
 			}
 		}
 		return table;
+	}
+	
+	ArrayList<Integer> getParentsEnergy(int x, int y) {
+		ArrayList<Integer> parents = new ArrayList<Integer>();
+		if (y == 0) return parents;
+		parents.add(energyTable[y-1][x]);
+		if (x!=0) parents.add(energyTable[y-1][x-1]);
+		if (x!=pic.width()-1) parents.add(energyTable[y-1][x+1]);
+		return parents;
 	}
 
 	public int gradientFunction(Color c1, Color c2) {
@@ -108,7 +119,13 @@ public class SeamCarver {
 	
 	/////////////////// Debug Methods //////////////////
 	public void printEnergyTable() {
-		
+		for (int y=0; y<pic.height(); y++) {
+			for (int x=0; x<pic.height(); x++) {
+				System.out.printf("%5d ", energyTable[y][x]);
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 	
 	public void showVerticalSeam(int[] seam, Picture picCopy) {
@@ -130,6 +147,10 @@ public class SeamCarver {
     public static void main(String[] args) {
         Picture picture = new Picture(PIC_SMALL);
         SeamCarver sc = new SeamCarver(picture);
+        //sc.printEnergyTable();
+        System.out.println(sc.getParentsEnergy(3, 0));
+        System.out.println(sc.getParentsEnergy(3, 2));
+        System.out.println(sc.getParentsEnergy(0, 2));
         int[] vSeam = new int[picture.height()];
         Arrays.fill(vSeam, 50);
         sc.showVerticalSeam(vSeam, null);

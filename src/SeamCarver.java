@@ -2,10 +2,10 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
 public class SeamCarver {
 	private Picture pic;
 	private int energyTable[][];
+	private boolean[][] keepArray;
 	private final static int MAX_ENERGY = 3061;
 	private final static String PIC_SMALL = "./Ando-Hiroshige-11th-station-Mishima.JPG";
 	private final static String PIC_TINY = "./12x10.png";
@@ -14,6 +14,8 @@ public class SeamCarver {
 	public SeamCarver(Picture picture) {
 		pic= new Picture(picture);
 		energyTable = getEnergyTable();
+		keepArray = new boolean[pic.height()][pic.width()];
+		Arrays.fill(keepArray,true);
 	}
 	
 	// current picture

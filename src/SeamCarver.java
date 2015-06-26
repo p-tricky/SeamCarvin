@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Scanner;
 
 public class SeamCarver {
 	private Picture pic;
@@ -262,10 +263,47 @@ public class SeamCarver {
         //int[] hSeam =  sc.findHorizontalSeam();
         //sc.showVerticalSeam(hSeam, null);
         //sc.showHorizontalSeam(hSeam, null);
-        sc.shrinkHorizontal(164);
-        sc.shrinkVertical(200);
+        
+        Scanner in = new Scanner(System.in);
+        
+        boolean valid = false;
+        int row = 0,col = 0;
+        while (!valid)
+        {
+        	try{
+        		System.out.print("Enter the number of columns to remove: \r\n");
+                String cols = in.nextLine();
+        		col = Integer.parseInt(cols);
+        		valid = true;
+        	}
+        	catch (Exception e)
+        	{
+        		System.out.print("The entered value isn't an int. \r\n");
+        		valid = false;
+        	}
+        }
+        valid = false;
+        while (!valid)
+        {
+        	try{
+        		System.out.print("Enter the number of rows to remove: \r\n");
+                String rows = in.nextLine();
+        		row = Integer.parseInt(rows);
+        		valid = true;
+        	}
+        	catch (Exception e)
+        	{
+        		System.out.print("The entered value isn't an int. \r\n");
+        		valid = false;
+        	}
+        }
+        
+        
+        sc.shrinkHorizontal(row);
+        sc.shrinkVertical(col);
         sc.updatePic();
         sc.pic.save("11th-Station-500x300.JPG");
+        sc.pic.show();
     }
 	
 }
